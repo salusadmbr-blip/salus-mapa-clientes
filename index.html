@@ -11,9 +11,13 @@ body{font-family:-apple-system,'Segoe UI',Inter,sans-serif;color:#0f1b33;backgro
 .top h1{font-size:16px;font-weight:700;line-height:1.2}
 .loc{font-size:13px;background:rgba(255,255,255,.2);border:1px solid rgba(255,255,255,.35);padding:9px 14px;border-radius:10px;cursor:pointer;white-space:nowrap;font-weight:600}
 .main{display:flex;flex:1;min-height:0}
-#map{flex:1;height:100%}
-.side{width:400px;height:100%;overflow-y:auto;-webkit-overflow-scrolling:touch;background:#fff;border-left:1px solid #e3e8f0}
-.side h2{font-size:12px;text-transform:uppercase;letter-spacing:.5px;color:#5a6b85;padding:14px 18px 6px;position:sticky;top:0;background:#fff}
+#map{flex:1;min-height:0;height:100%}
+.side{width:400px;height:100%;background:#fff;border-left:1px solid #e3e8f0;display:flex;flex-direction:column;min-height:0}
+.sidehead{font-size:13px;font-weight:700;color:#0f1b33;padding:14px 18px;background:#fff;cursor:pointer;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid #eef1f6;flex-shrink:0}
+.sidehead .chev{font-size:16px;transition:transform .2s;color:#0b5cab}
+.list{overflow-y:auto;-webkit-overflow-scrolling:touch;flex:1;min-height:0}
+body.collapsed .list{display:none}
+body.collapsed .sidehead .chev{transform:rotate(180deg)}
 .item{padding:13px 18px;border-bottom:1px solid #eef1f6;cursor:pointer}
 .item:active{background:#eef5ff}
 .row1{display:flex;align-items:center;gap:8px}
@@ -32,15 +36,18 @@ body{font-family:-apple-system,'Segoe UI',Inter,sans-serif;color:#0f1b33;backgro
 .leaflet-popup-content{font-size:14px;line-height:1.4}
 @media (max-width:760px){
   .main{flex-direction:column}
-  #map{width:100%;height:42vh;flex:none}
-  .side{width:100%;height:auto;flex:1;border-left:none;border-top:1px solid #e3e8f0}
+  #map{width:100%;flex:1;min-height:0}
+  .side{width:100%;flex-shrink:0;max-height:50vh;border-left:none;border-top:1px solid #e3e8f0}
+  body.collapsed .side{max-height:none}
   .top h1{font-size:15px}
 }
 </style></head><body>
 <div class="top"><h1>Clientes Salus proximos</h1>
 <div class="loc" onclick="locate()" id="locbtn">Minha localizacao</div></div>
 <div class="main"><div id="map"></div>
-<div class="side"><h2>20 clientes - toque para ver o caminho</h2><div class="item" data-i="0" onclick="goTo(0)">
+<div class="side">
+<div class="sidehead" onclick="toggleList()"><span id="headtxt">20 clientes - toque para ver</span><span class="chev">v</span></div>
+<div class="list"><div class="item" data-i="0" onclick="goTo(0)">
 <div class="row1"><span class="num">1</span><span class="nm">Leonardo Sanchez - CELTICS MAGIC PROPERTIES LLC</span><span class="dist v0">0.19 mi</span></div>
 <div class="addr">16728 Artimino Loop Montverde, FL 34756</div>
 <a class="tel" href="tel:+5511941958022" onclick="event.stopPropagation()">+5511941958022</a>
@@ -180,21 +187,17 @@ body{font-family:-apple-system,'Segoe UI',Inter,sans-serif;color:#0f1b33;backgro
 <div class="nav">
 <a class="btn waze" href="#" onclick="event.stopPropagation();openWaze(19);return false">Abrir no Waze</a>
 <a class="btn gm" href="#" onclick="event.stopPropagation();openGmaps(19);return false">Google Maps</a>
-</div></div></div></div>
+</div></div></div>
+</div></div>
 <script>
 const data=[{"nome": "Leonardo Sanchez - CELTICS MAGIC PROPERTIES LLC", "tel": "+5511941958022", "end": "16728 Artimino Loop Montverde, FL 34756", "lat": 28.5659862, "lon": -81.6710322, "dist": 0.19}, {"nome": "Alexandre Capitani", "tel": "(407) 403-8965", "end": "16344 PENDIO DR, MONTVERDE, FL, 34756", "lat": 28.5711594, "lon": -81.6698058, "dist": 0.2}, {"nome": "Graziela Quinamo", "tel": "(781) 853-3960", "end": "16348 PENDIO DR, Bella Collina, MONTVERDE, FL, 34756", "lat": 28.5714457, "lon": -81.6698696, "dist": 0.22}, {"nome": "Bruna e Paulo Sereno (Selecta Realty)", "tel": "+1 (407) 883-6648", "end": "17044 Cavallo Drive, Montverde, FL", "lat": 28.5737182, "lon": -81.672825, "dist": 0.36}, {"nome": "Chieppe LLC - Giuliana", "tel": "(407) 383-9779", "end": "16913 Crete Way Montverde, FL 34756", "lat": 28.5712759, "lon": -81.6577865, "dist": 0.85}, {"nome": "Gilberto e Tais Fialho", "tel": "+553197979792", "end": "15223 Pendio Dr, Montverde, FL 34756", "lat": 28.5793945, "lon": -81.6617034, "dist": 0.95}, {"nome": "Humberto Engel", "tel": "+1 (407) 421-9067", "end": "16933 Crete Way, Bella Collina, Montverde, FL, 34756", "lat": 28.5712866, "lon": -81.6559436, "dist": 0.96}, {"nome": "Adriel Bortolotti - Opera S Investment LLC", "tel": "+556499714629", "end": "15930 Pendio Dr, Montverde, FL 34756", "lat": 28.5750297, "lon": -81.655645, "dist": 1.06}, {"nome": "Fernanda Rocha Kanner", "tel": "+5511995979595", "end": "15824 Pendio Dr Montverde, FL 34756", "lat": 28.579302, "lon": -81.6545448, "dist": 1.26}, {"nome": "Rui Rocha e Silvia Novack", "tel": "+554196046000 / +554191637743", "end": "16025 VETTA DR, MONTVERDE, FL, 34756", "lat": 28.5813235, "lon": -81.6891079, "dist": 1.38}, {"nome": "Rafael Napoel\u00e3o e Talita - R&B Business", "tel": "+1 (321) 333-0067", "end": "16816 Bolsena Dr, Montverde, FL 34756", "lat": 28.5883871, "lon": -81.6661308, "dist": 1.4}, {"nome": "Guilherme Mendes", "tel": "(412) 969-6426", "end": "16003 Vetta Dr, Montverde, FL 34756", "lat": 28.581726, "lon": -81.6898034, "dist": 1.43}, {"nome": "C\u00e9sar e In\u00eas Zanchet", "tel": "+5511996318144", "end": "15425 PENDIO DR, MONTVERDE, FL, 34756", "lat": 28.5880486, "lon": -81.6607811, "dist": 1.49}, {"nome": "Daniel Travelstead e Sheila Lago - Adriana nova propriet\u00e1ria", "tel": "(737) 701-0510", "end": "16841 Bolsena Dr, Montverde, FL 34756", "lat": 28.5896453, "lon": -81.6659804, "dist": 1.49}, {"nome": "Marcela Ma", "tel": "(407) 457-7042", "end": "17018 Medici Way Montverde, FL 34756", "lat": 28.5864858, "lon": -81.6577947, "dist": 1.49}, {"nome": "Jos\u00e9 Carlos da Silva", "tel": "+1 (352) 349-5065", "end": "17038 Medici Way Montverde, FL 34756", "lat": 28.5882777, "lon": -81.6579133, "dist": 1.59}, {"nome": "Wagner e Carla Andrade", "tel": "(954) 324-5299", "end": "16021, Volterra Point, Montverde, FL, 34756", "lat": 28.5801816, "lon": -81.6955618, "dist": 1.66}, {"nome": "Armando e Bruna Rosseti", "tel": "(407) 690-7015 / (407) 600-5943", "end": "15746 Vetta Dr Montverde, FL 34756", "lat": 28.5828903, "lon": -81.694802, "dist": 1.72}, {"nome": "Luana Oliveira", "tel": "+1 (954) 696-7718", "end": "15644 Vetta Dr., Montverde, FL 34756", "lat": 28.5841823, "lon": -81.6962086, "dist": 1.84}, {"nome": "Renata Silva e Vinicius - Bellamy VRMM LLC", "tel": "(786) 338-3808", "end": "16101 Bellamy Way Montverde, FL 34756", "lat": 28.5981125, "lon": -81.6887356, "dist": 2.29}];const alvo={"lat": 28.5686787, "lon": -81.6715229, "end": "16309 Pendio Dr, Montverde, FL 34756"};
 const map=L.map('map').setView([alvo.lat,alvo.lon],14);
 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:19,attribution:'OpenStreetMap'}).addTo(map);
 let mePos=null, meMarker=null, line=null; const markers=[];
 const isMobile=/Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
-function openWaze(i){
-  const c=data[i];
-  // app do Waze no celular; site no computador
-  const app='waze://?ll='+c.lat+','+c.lon+'&navigate=yes';
-  const web='https://waze.com/ul?ll='+c.lat+','+c.lon+'&navigate=yes';
-  window.location.href = isMobile ? app : web;
-  if(isMobile) setTimeout(()=>{window.location.href=web;},1200);
-}
+function toggleList(){document.body.classList.toggle('collapsed');setTimeout(()=>map.invalidateSize(),250);}
+function openWaze(i){const c=data[i];const app='waze://?ll='+c.lat+','+c.lon+'&navigate=yes';const web='https://waze.com/ul?ll='+c.lat+','+c.lon+'&navigate=yes';
+  window.location.href=isMobile?app:web;if(isMobile)setTimeout(()=>{window.location.href=web;},1200);}
 function openGmaps(i){const c=data[i];const o=mePos?(mePos.lat+','+mePos.lng):'';let url='https://www.google.com/maps/dir/?api=1&destination='+c.lat+','+c.lon+'&travelmode=driving';if(o)url+='&origin='+o;window.open(url,'_blank');}
 function popHtml(c,i){return '<b>'+(i+1)+'. '+c.nome+'</b><br>'+c.end+'<br><b>'+c.dist+' mi</b> &middot; Tel: '+(c.tel||'-')+'<br>'+
    '<span class="popbtn" style="background:#33ccff" onclick="openWaze('+i+')">Waze</span>'+
@@ -204,8 +207,7 @@ data.forEach((c,i)=>{const color=c.dist<0.5?'#1a7f3c':(c.dist<1.5?'#0b5cab':'#80
   m.bindTooltip(String(i+1),{permanent:true,direction:'center',className:'mtt'});m.bindPopup(popHtml(c,i));markers.push(m);});
 function goTo(i){const c=data[i];map.setView([c.lat,c.lon],16);markers[i].openPopup();if(line)map.removeLayer(line);
   const from=mePos?[mePos.lat,mePos.lng]:[alvo.lat,alvo.lon];
-  line=L.polyline([from,[c.lat,c.lon]],{color:'#0b5cab',weight:3,dashArray:'8,6',opacity:.8}).addTo(map);
-  if(window.innerWidth<=760) document.getElementById('map').scrollIntoView({behavior:'smooth'});}
+  line=L.polyline([from,[c.lat,c.lon]],{color:'#0b5cab',weight:3,dashArray:'8,6',opacity:.8}).addTo(map);}
 function locate(){if(!navigator.geolocation){alert('Seu aparelho nao permite localizacao.');return;}
   document.getElementById('locbtn').textContent='Localizando...';
   navigator.geolocation.getCurrentPosition(p=>{mePos={lat:p.coords.latitude,lng:p.coords.longitude};
