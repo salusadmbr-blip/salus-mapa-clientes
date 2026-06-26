@@ -1,38 +1,46 @@
 <!DOCTYPE html><html lang="pt-BR"><head><meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
 <title>Mapa - Clientes proximos</title>
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <style>
-*{box-sizing:border-box;margin:0;padding:0}
-body{font-family:-apple-system,'Segoe UI',Inter,sans-serif;color:#0f1b33;background:#eef1f6;height:100vh;overflow:hidden}
-.top{background:linear-gradient(135deg,#0b5cab,#1e7fd4);color:#fff;padding:14px 22px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px}
-.top h1{font-size:18px;font-weight:700}
-.loc{font-size:13px;background:rgba(255,255,255,.18);border:1px solid rgba(255,255,255,.3);padding:6px 12px;border-radius:8px;cursor:pointer}
-.main{display:flex;height:calc(100vh - 54px)}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html,body{height:100%}
+body{font-family:-apple-system,'Segoe UI',Inter,sans-serif;color:#0f1b33;background:#eef1f6;display:flex;flex-direction:column;height:100vh;overflow:hidden}
+.top{background:linear-gradient(135deg,#0b5cab,#1e7fd4);color:#fff;padding:12px 18px;display:flex;align-items:center;justify-content:space-between;gap:8px;flex-shrink:0}
+.top h1{font-size:16px;font-weight:700;line-height:1.2}
+.loc{font-size:13px;background:rgba(255,255,255,.2);border:1px solid rgba(255,255,255,.35);padding:9px 14px;border-radius:10px;cursor:pointer;white-space:nowrap;font-weight:600}
+.main{display:flex;flex:1;min-height:0}
 #map{flex:1;height:100%}
-.side{width:400px;height:100%;overflow-y:auto;background:#fff;border-left:1px solid #e3e8f0}
-.side h2{font-size:13px;text-transform:uppercase;letter-spacing:.5px;color:#5a6b85;padding:16px 18px 8px}
-.item{padding:12px 18px;border-bottom:1px solid #eef1f6;cursor:pointer}
-.item:hover{background:#f4f8ff}
+.side{width:400px;height:100%;overflow-y:auto;-webkit-overflow-scrolling:touch;background:#fff;border-left:1px solid #e3e8f0}
+.side h2{font-size:12px;text-transform:uppercase;letter-spacing:.5px;color:#5a6b85;padding:14px 18px 6px;position:sticky;top:0;background:#fff}
+.item{padding:13px 18px;border-bottom:1px solid #eef1f6;cursor:pointer}
+.item:active{background:#eef5ff}
 .row1{display:flex;align-items:center;gap:8px}
-.num{background:#0b5cab;color:#fff;width:22px;height:22px;border-radius:50%;font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0}
-.nm{font-weight:600;font-size:14px;flex:1}
-.dist{font-size:12px;font-weight:700;padding:2px 8px;border-radius:20px;white-space:nowrap}
+.num{background:#0b5cab;color:#fff;width:24px;height:24px;border-radius:50%;font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.nm{font-weight:600;font-size:15px;flex:1;line-height:1.25}
+.dist{font-size:12px;font-weight:700;padding:3px 9px;border-radius:20px;white-space:nowrap}
 .v0{background:#e7f6ec;color:#1a7f3c}.v1{background:#e7f0fb;color:#0b5cab}.v2{background:#f0f0f4;color:#6a7689}
-.addr{font-size:12.5px;color:#5a6b85;margin:5px 0 6px 30px}
-.tel{display:inline-block;margin-left:30px;font-size:13px;font-weight:600;color:#0b5cab;text-decoration:none}
-.nav{margin:8px 0 2px 30px;display:flex;gap:8px}
-.btn{font-size:12px;font-weight:600;padding:6px 12px;border-radius:8px;text-decoration:none;color:#fff;cursor:pointer}
+.addr{font-size:13px;color:#5a6b85;margin:6px 0 8px 32px}
+.tel{display:inline-block;margin-left:32px;font-size:15px;font-weight:700;color:#0b5cab;text-decoration:none}
+.nav{margin:10px 0 2px 32px;display:flex;gap:10px}
+.btn{flex:1;text-align:center;font-size:14px;font-weight:700;padding:11px 10px;border-radius:10px;text-decoration:none;color:#fff;cursor:pointer}
 .btn.waze{background:#33ccff}.btn.gm{background:#1a7f3c}
-.popbtn{display:inline-block;margin-top:6px;margin-right:6px;font-size:12px;font-weight:600;padding:5px 10px;border-radius:6px;color:#fff;cursor:pointer}
+.popbtn{display:inline-block;margin-top:8px;margin-right:8px;font-size:14px;font-weight:700;padding:9px 14px;border-radius:8px;color:#fff;cursor:pointer}
 .mtt{background:transparent;border:none;box-shadow:none;color:#fff;font-weight:700;font-size:11px}
 .me{background:#0b5cab;width:16px;height:16px;border-radius:50%;border:3px solid #fff;box-shadow:0 0 0 4px rgba(11,92,171,.3)}
+.leaflet-popup-content{font-size:14px;line-height:1.4}
+@media (max-width:760px){
+  .main{flex-direction:column}
+  #map{width:100%;height:42vh;flex:none}
+  .side{width:100%;height:auto;flex:1;border-left:none;border-top:1px solid #e3e8f0}
+  .top h1{font-size:15px}
+}
 </style></head><body>
-<div class="top"><h1>Clientes Salus proximos de voce</h1>
-<div class="loc" onclick="locate()" id="locbtn">Usar minha localizacao atual</div></div>
+<div class="top"><h1>Clientes Salus proximos</h1>
+<div class="loc" onclick="locate()" id="locbtn">Minha localizacao</div></div>
 <div class="main"><div id="map"></div>
-<div class="side"><h2>20 clientes - clique para tracar o caminho</h2><div class="item" data-i="0" onclick="goTo(0)">
+<div class="side"><h2>20 clientes - toque para ver o caminho</h2><div class="item" data-i="0" onclick="goTo(0)">
 <div class="row1"><span class="num">1</span><span class="nm">Leonardo Sanchez - CELTICS MAGIC PROPERTIES LLC</span><span class="dist v0">0.19 mi</span></div>
 <div class="addr">16728 Artimino Loop Montverde, FL 34756</div>
 <a class="tel" href="tel:+5511941958022" onclick="event.stopPropagation()">+5511941958022</a>
@@ -178,25 +186,35 @@ const data=[{"nome": "Leonardo Sanchez - CELTICS MAGIC PROPERTIES LLC", "tel": "
 const map=L.map('map').setView([alvo.lat,alvo.lon],14);
 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:19,attribution:'OpenStreetMap'}).addTo(map);
 let mePos=null, meMarker=null, line=null; const markers=[];
-function openWaze(i){const c=data[i];window.open('https://waze.com/ul?ll='+c.lat+','+c.lon+'&navigate=yes','_blank');}
+const isMobile=/Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+function openWaze(i){
+  const c=data[i];
+  // app do Waze no celular; site no computador
+  const app='waze://?ll='+c.lat+','+c.lon+'&navigate=yes';
+  const web='https://waze.com/ul?ll='+c.lat+','+c.lon+'&navigate=yes';
+  window.location.href = isMobile ? app : web;
+  if(isMobile) setTimeout(()=>{window.location.href=web;},1200);
+}
 function openGmaps(i){const c=data[i];const o=mePos?(mePos.lat+','+mePos.lng):'';let url='https://www.google.com/maps/dir/?api=1&destination='+c.lat+','+c.lon+'&travelmode=driving';if(o)url+='&origin='+o;window.open(url,'_blank');}
 function popHtml(c,i){return '<b>'+(i+1)+'. '+c.nome+'</b><br>'+c.end+'<br><b>'+c.dist+' mi</b> &middot; Tel: '+(c.tel||'-')+'<br>'+
-   '<span class="popbtn" style="background:#33ccff" onclick="openWaze('+i+')">Abrir no Waze</span>'+
-   '<span class="popbtn" style="background:#1a7f3c" onclick="openGmaps('+i+')">Google Maps</span>';}
+   '<span class="popbtn" style="background:#33ccff" onclick="openWaze('+i+')">Waze</span>'+
+   '<span class="popbtn" style="background:#1a7f3c" onclick="openGmaps('+i+')">Maps</span>';}
 data.forEach((c,i)=>{const color=c.dist<0.5?'#1a7f3c':(c.dist<1.5?'#0b5cab':'#8090a8');
   const m=L.circleMarker([c.lat,c.lon],{radius:11,fillColor:color,color:'#fff',weight:2,fillOpacity:.95}).addTo(map);
   m.bindTooltip(String(i+1),{permanent:true,direction:'center',className:'mtt'});m.bindPopup(popHtml(c,i));markers.push(m);});
 function goTo(i){const c=data[i];map.setView([c.lat,c.lon],16);markers[i].openPopup();if(line)map.removeLayer(line);
   const from=mePos?[mePos.lat,mePos.lng]:[alvo.lat,alvo.lon];
-  line=L.polyline([from,[c.lat,c.lon]],{color:'#0b5cab',weight:3,dashArray:'8,6',opacity:.8}).addTo(map);}
+  line=L.polyline([from,[c.lat,c.lon]],{color:'#0b5cab',weight:3,dashArray:'8,6',opacity:.8}).addTo(map);
+  if(window.innerWidth<=760) document.getElementById('map').scrollIntoView({behavior:'smooth'});}
 function locate(){if(!navigator.geolocation){alert('Seu aparelho nao permite localizacao.');return;}
   document.getElementById('locbtn').textContent='Localizando...';
   navigator.geolocation.getCurrentPosition(p=>{mePos={lat:p.coords.latitude,lng:p.coords.longitude};
     if(meMarker)map.removeLayer(meMarker);
     const ic=L.divIcon({className:'',html:'<div class="me"></div>',iconSize:[16,16],iconAnchor:[8,8]});
     meMarker=L.marker([mePos.lat,mePos.lng],{icon:ic}).addTo(map).bindPopup('Voce esta aqui').openPopup();
-    map.setView([mePos.lat,mePos.lng],14);document.getElementById('locbtn').textContent='Localizacao ativada';
-  },err=>{document.getElementById('locbtn').textContent='Usar minha localizacao atual';
+    map.setView([mePos.lat,mePos.lng],13);document.getElementById('locbtn').textContent='Localizacao ativa';
+  },err=>{document.getElementById('locbtn').textContent='Minha localizacao';
     const grp=L.featureGroup(markers);map.fitBounds(grp.getBounds().pad(0.15));},{enableHighAccuracy:true,timeout:8000});}
+setTimeout(()=>map.invalidateSize(),300);
 const grp=L.featureGroup(markers);map.fitBounds(grp.getBounds().pad(0.15));locate();
 </script></body></html>
